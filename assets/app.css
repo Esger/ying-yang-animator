@@ -1,0 +1,43 @@
+body {
+  position: relative;
+  height: 100vh;
+  background-color: goldenrod;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+svg {
+  overflow: visible;
+}
+.whiteLeft,
+.whiteRight {
+  fill: white;
+  stroke: white;
+  stroke-width: 3;
+}
+.blackLeft,
+.blackRight {
+  fill: black;
+  stroke: black;
+  stroke-width: 3;
+}
+.rotate {
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  -webkit-transition-timing-function: ease-in-out;
+          transition-timing-function: ease-in-out;
+  will-change: transform;
+}
