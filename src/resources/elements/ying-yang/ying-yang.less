@@ -10,21 +10,20 @@ svg {
     overflow: visible;
 }
 
+.part {
+    -webkit-transform-origin: center center;
+    transform-origin        : center center;
+    // transition-timing-function: ease;
+    will-change             : transform;
+    stroke-width            : 3;
+}
+
 .whiteLeft, .whiteRight {
-    fill        : white;
-    stroke      : white;
-    stroke-width: 3;
+    fill  : white;
+    stroke: white;
 }
 
 .blackLeft, .blackRight {
-    fill        : black;
-    stroke      : black;
-    stroke-width: 3;
-}
-
-.rotate {
-    -webkit-transform-origin  : center center;
-    transform-origin          : center center;
-    transition-timing-function: ease-in-out;
-    will-change               : transform;
+    fill  : black;
+    stroke: black;
 }

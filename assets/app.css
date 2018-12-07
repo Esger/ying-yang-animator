@@ -22,22 +22,19 @@ body {
 svg {
   overflow: visible;
 }
+.part {
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  will-change: transform;
+  stroke-width: 3;
+}
 .whiteLeft,
 .whiteRight {
   fill: white;
   stroke: white;
-  stroke-width: 3;
 }
 .blackLeft,
 .blackRight {
   fill: black;
   stroke: black;
-  stroke-width: 3;
-}
-.rotate {
-  -webkit-transform-origin: center center;
-  transform-origin: center center;
-  -webkit-transition-timing-function: ease-in-out;
-          transition-timing-function: ease-in-out;
-  will-change: transform;
 }

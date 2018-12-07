@@ -1,4 +1,7 @@
 <template>
+    <require from="resources/value-converters/classlist-value-converter"></require>
+    <require from="resources/value-converters/layer1-value-converter"></require>
+    <require from="resources/value-converters/layer2-value-converter"></require>
     <div class="container"
          click.trigger="toggleAnimation()">
         <svg version="1.1"
@@ -10,20 +13,18 @@
              enable-background="new 0 0 400 400"
              xml:space="preserve">
             <g id="Layer_1">
-                <path class="part blackRight rotate"
-                      data-order="0"
+                <!-- <path repeat.for="part1 of parts | layer1"
+                      class.bind="$index | classlist"
+                      data-order.bind="$index"
+                      css="'transform: rotate(' + ${angle} + 'deg);'"
+                      d="${part1}"></path> -->
+            </g>
+            <g id="Layer_2">
+                <path repeat.for="part2 of parts | layer2"
+                      class.bind="part2.classNames"
+                      data-order.bind="$index"
                       css="transform: rotate(${angle}deg);"
-                      d="M202.581,0.033C256.616,1.401,300,45.634,300,100c0,55.229-44.771,100-100,100c-55.229,0-100,44.771-100,100 c0,54.365,43.383,98.599,97.419,99.968c0.86,0.011,1.718,0.032,2.581,0.032c110.457,0,200-89.543,200-200 C400,90.406,311.848,1.417,202.581,0.033z" />
-                <path class="part blackLeft rotate"
-                      data-order="1"
-                      css="transform: rotate(${angle}deg);"
-                      d="M197.419,399.968C88.153,398.583,0,309.594,0,200C0,89.543,89.543,0,200,0c0.863,0,1.721,0.021,2.581,0.033 C256.616,1.401,300,45.634,300,100c0,55.229-44.771,100-100,100c-55.229,0-100,44.771-100,100 C100,354.365,143.383,398.599,197.419,399.968z M200,66.666c-18.226,0-33,14.774-33,33s14.774,33,33,33c18.227,0,33-14.774,33-33 S218.227,66.666,200,66.666z" />
-                <!-- <path class="part whiteRight fixed"
-                      data-order="2"
-                      d="M202.581,0.033C256.616,1.4,300,45.634,300,100c0,55.229-44.771, 100-100,100s-100,44.771-100,100 c0,54.365,43.383,98.6,97.419,99.968c0.86,0.011,1.718,0.032,2.581,0.032c110.457,0,200-89.543,200-200 C400,90.406,311.848,1.417,202.581,0.033z" />
-                <path class="part whiteLeft fixed"
-                      data-order="3"
-                      d="M197.419,399.968C88.152,398.583,0,309.594,0,200C0,89.543,89.543,0,200,0c0.863,0,1.721,0.021,2.581,0.033 C256.616,1.4,300,45.634,300,100c0,55.229-44.771,100-100,100s-100,44.771-100,100C100,354.365,143.383,398.6,197.419,399.968z M200,66.666c-18.227,0-33,14.773-33,33s14.773,33,33,33s33-14.773,33-33S218.227,66.666,200,66.666z" /> -->
+                      d="${part2.d}"></path>
             </g>
         </svg>
     </div>
