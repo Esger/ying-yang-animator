@@ -104,12 +104,13 @@ define('resources/value-converters/classlist-value-converter',['exports'], funct
         return ClasslistValueConverter;
     }();
 });
-define('resources/elements/ying-yang/ying-yang',["exports"], function (exports) {
-    "use strict";
+define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaEventAggregator) {
+    'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
+    exports.YingYangCustomElement = undefined;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -135,15 +136,21 @@ define('resources/elements/ying-yang/ying-yang',["exports"], function (exports) 
         };
     }();
 
-    var YingYangCustomElement = exports.YingYangCustomElement = function () {
-        function YingYangCustomElement() {
+    var _dec, _class;
+
+    var YingYangCustomElement = exports.YingYangCustomElement = (_dec = (0, _aureliaFramework.inject)(_aureliaEventAggregator.EventAggregator), _dec(_class = function () {
+        function YingYangCustomElement(eventAggregator) {
+            var _this = this;
+
             _classCallCheck(this, YingYangCustomElement);
 
-            this._animationId = null;
             this._animate = false;
             this._cycleTime = 10000;
             this._rotationTime = this._cycleTime / 2;
             this._halfRotationTime = this._rotationTime / 2;
+            this._angle = 0;
+            this._stepCounter = 0;
+            this._done = true;
             this.paths = ["M197.419,399.968C88.153,398.583,0,309.594,0,200C0,89.543,89.543,0,200,0c0.863,0,1.721,0.021,2.581,0.033 C256.616,1.401,300,45.634,300,100c0,55.229-44.771,100-100,100c-55.229,0-100,44.771-100,100 C100,354.365,143.383,398.599,197.419,399.968z M200,66.666c-18.226,0-33,14.774-33,33s14.774,33,33,33c18.227,0,33-14.774,33-33 S218.227,66.666,200,66.666z", "M202.581,0.033C256.616,1.4,300,45.634,300,100c0,55.229-44.771, 100-100,100s-100,44.771-100,100 c0,54.365,43.383,98.6,97.419,99.968c0.86,0.011,1.718,0.032,2.581,0.032c110.457,0,200-89.543,200-200 C400,90.406,311.848,1.417,202.581,0.033z"];
             this.parts = [{
                 d: this.paths[0].slice(),
@@ -163,30 +170,64 @@ define('resources/elements/ying-yang/ying-yang',["exports"], function (exports) 
                 id: 3
             }];
             this.stageSortOrders = [[0, 1, 2, 3], [1, 3, 2, 0], [2, 3, 0, 1], [2, 0, 1, 3]];
+            this.handleTransitionEnd = function (e) {
+                if (_this._done) {
+                    _this._done = !_this._done;
+                    window.requestAnimationFrame(function () {
+                        _this.rotate();
+                        _this._done = !_this._done;
+                    });
+                }
+            };
         }
+
+        YingYangCustomElement.prototype.attached = function attached() {
+            document.addEventListener('transitionend', this.handleTransitionEnd);
+        };
+
+        YingYangCustomElement.prototype.detached = function detached() {
+            document.removeEventListener('transitionend', this.handleTransitionEnd);
+        };
+
+        YingYangCustomElement.prototype.rotate = function rotate() {
+            if (this._animate) {
+                this._stepCounter++;
+                this.angle = this._stepCounter * 180;
+                console.log(this._stepCounter, this.angle);
+            }
+        };
 
         YingYangCustomElement.prototype.toggleAnimation = function toggleAnimation() {
             this._animate = !this._animate;
             if (this._animate) {
-                this._startMillis = Date.now();
+                this._stepCounter = 0;
+                this.rotate();
             }
         };
 
         _createClass(YingYangCustomElement, [{
-            key: "angle",
+            key: 'angle',
             get: function get() {
-                var angle = 0;
-                if (this._animate) {
-                    var millisPassed = Date.now() - this._startMillis;
-                    angle = millisPassed % this._cycleTime / this._cycleTime * 720;
-                    var stage = Math.floor(angle / 180);
-                }
-                return angle;
+                return this._angle;
+            },
+            set: function set(angle) {
+                this._angle = angle;
+            }
+        }, {
+            key: 'duration',
+            get: function get() {
+                return this._halfRotationTime;
+            }
+        }, {
+            key: 'timing',
+            get: function get() {
+                var timing = this._stepCounter % 2 == 1 ? 'ease-in' : 'ease-out';
+                return timing;
             }
         }]);
 
         return YingYangCustomElement;
-    }();
+    }()) || _class);
 });
 define('resources/value-converters/layer-value-converter',["exports"], function (exports) {
     "use strict";
@@ -293,5 +334,5 @@ define('resources/value-converters/layer2-value-converter',["exports"], function
     }();
 });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/elements/ying-yang/ying-yang\"></require>\n    <ying-yang containerless></ying-yang>\n</template>"; });
-define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/value-converters/classlist-value-converter\"></require>\n    <require from=\"resources/value-converters/layer1-value-converter\"></require>\n    <require from=\"resources/value-converters/layer2-value-converter\"></require>\n    <div class=\"container\"\n         click.trigger=\"toggleAnimation()\">\n        <svg version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g id=\"Layer_1\">\n                <!-- <path repeat.for=\"part1 of parts | layer1\"\n                      class.bind=\"$index | classlist\"\n                      data-order.bind=\"$index\"\n                      css=\"'transform: rotate(' + ${angle} + 'deg);'\"\n                      d=\"${part1}\"></path> -->\n            </g>\n            <g id=\"Layer_2\">\n                <path repeat.for=\"part2 of parts | layer2\"\n                      class.bind=\"part2.classNames\"\n                      data-order.bind=\"$index\"\n                      css=\"transform: rotate(${angle}deg);\"\n                      d=\"${part2.d}\"></path>\n            </g>\n        </svg>\n    </div>\n\n</template>"; });
+define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/value-converters/classlist-value-converter\"></require>\n    <require from=\"resources/value-converters/layer1-value-converter\"></require>\n    <require from=\"resources/value-converters/layer2-value-converter\"></require>\n    <div class=\"container\"\n         click.trigger=\"toggleAnimation()\">\n        <svg version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g id=\"Layer_1\">\n                <!-- <path repeat.for=\"part1 of parts | layer1\"\n                      class.bind=\"$index | classlist\"\n                      data-order.bind=\"$index\"\n                      css=\"'transform: rotate(' + ${angle} + 'deg);'\"\n                      d=\"${part1}\"></path> -->\n            </g>\n            <g id=\"Layer_2\">\n                <path repeat.for=\"part2 of parts | layer2\"\n                      class.bind=\"part2.classNames\"\n                      data-order.bind=\"$index\"\n                      css=\"transform: rotate(${angle}deg); transition-duration: ${duration/1000}s; transition-timing-function: ${timing}\"\n                      d=\"${part2.d}\"></path>\n            </g>\n        </svg>\n    </div>\n\n</template>"; });
 //# sourceMappingURL=app-bundle.js.map
