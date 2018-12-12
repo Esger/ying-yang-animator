@@ -8,9 +8,9 @@ export class YingYangCustomElement {
         this._animate = false;
         this._cycleTime = 10000;
         this._rotationTime = this._cycleTime / 2;
-        this._halfRotationTime = this._rotationTime / 2;
-        this._angle = 0;
-        this._stepCounter = 0;
+        this.timingClass = 'ease-in';
+        this.duration = this._rotationTime / 2;
+        this.angle = 0;
         this._done = true;
         this.paths = [
             "M197.419,399.968C88.153,398.583,0,309.594,0,200C0,89.543,89.543,0,200,0c0.863,0,1.721,0.021,2.581,0.033 C256.616,1.401,300,45.634,300,100c0,55.229-44.771,100-100,100c-55.229,0-100,44.771-100,100 C100,354.365,143.383,398.599,197.419,399.968z M200,66.666c-18.226,0-33,14.774-33,33s14.774,33,33,33c18.227,0,33-14.774,33-33 S218.227,66.666,200,66.666z",
@@ -19,22 +19,22 @@ export class YingYangCustomElement {
         this.parts = [
             {
                 d: this.paths[0].slice(),
-                classNames: 'part whiteLeft',
+                classNames: 'part whiteLeft ',
                 id: 0
             },
             {
                 d: this.paths[1].slice(),
-                classNames: 'part whiteRight',
+                classNames: 'part whiteRight ',
                 id: 1
             },
             {
                 d: this.paths[0].slice(),
-                classNames: 'part blackLeft',
+                classNames: 'part blackLeft ',
                 id: 2
             },
             {
                 d: this.paths[1].slice(),
-                classNames: 'part blackLeft',
+                classNames: 'part blackLeft ',
                 id: 3
             }
         ];
@@ -66,26 +66,10 @@ export class YingYangCustomElement {
     rotate() {
         if (this._animate) {
             this._stepCounter++;
+            this.timingClass = (this._stepCounter % 2 == 1) ? 'ease-in' : 'ease-out';
             this.angle = this._stepCounter * 180;
-            console.log(this._stepCounter, this.angle);
+            console.log(this._stepCounter, this.timingClass);
         }
-    }
-
-    get angle() {
-        return this._angle;
-    }
-
-    set angle(angle) {
-        this._angle = angle;
-    }
-
-    get duration() {
-        return this._halfRotationTime;
-    }
-
-    get timing() {
-        let timing = (this._stepCounter % 2 == 1) ? 'ease-in' : 'ease-out';
-        return timing;
     }
 
     toggleAnimation() {

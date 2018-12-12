@@ -28,6 +28,14 @@ svg {
   will-change: transform;
   stroke-width: 3;
 }
+.ease-in {
+  -webkit-transition-timing-function: ease-in;
+          transition-timing-function: ease-in;
+}
+.ease-out {
+  -webkit-transition-timing-function: ease-out;
+          transition-timing-function: ease-out;
+}
 .whiteLeft,
 .whiteRight {
   fill: white;
