@@ -1,7 +1,6 @@
 <template>
-    <require from="resources/value-converters/classlist-value-converter"></require>
-    <require from="resources/value-converters/layer1-value-converter"></require>
-    <require from="resources/value-converters/layer2-value-converter"></require>
+    <require from="resources/value-converters/sorter-value-converter"></require>
+    <require from="resources/elements/part/part"></require>
     <div class="container"
          click.trigger="toggleAnimation()">
         <svg version="1.1"
@@ -13,18 +12,11 @@
              enable-background="new 0 0 400 400"
              xml:space="preserve">
             <g id="Layer_1">
-                <!-- <path repeat.for="part1 of parts | layer1"
-                      class.bind="$index | classlist"
-                      data-order.bind="$index"
-                      css="'transform: rotate(' + ${angle} + 'deg);'"
-                      d="${part1}"></path> -->
-            </g>
-            <g id="Layer_2">
-                <path repeat.for="part2 of parts | layer2"
-                      class.bind="part2.classNames"
-                      data-order.bind="$index"
-                      css="transform: rotate(${angle}deg); transition-duration: ${duration/1000}s; transition-timing-function: ${timing}"
-                      d="${part2.d}"></path>
+                <part repeat.for="part of parts | sorter:part.index:'ascending'"
+                      class-names.bind="part.classNames"
+                      angle.bind="angle"
+                      path.bind="part.path"
+                      containerless></part>
             </g>
         </svg>
     </div>

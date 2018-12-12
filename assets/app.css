@@ -6,6 +6,24 @@ body {
   margin: 0;
   padding: 0;
 }
+.part {
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  will-change: transform;
+  stroke-width: 3;
+}
+.whiteLeft,
+.whiteRight {
+  fill: white;
+  stroke: white;
+  -webkit-transform: none !important;
+          transform: none !important;
+}
+.blackLeft,
+.blackRight {
+  fill: black;
+  stroke: black;
+}
 .container {
   width: 100vw;
   height: 100vh;
@@ -21,20 +39,4 @@ body {
 }
 svg {
   overflow: visible;
-}
-.part {
-  -webkit-transform-origin: center center;
-  transform-origin: center center;
-  will-change: transform;
-  stroke-width: 3;
-}
-.whiteLeft,
-.whiteRight {
-  fill: white;
-  stroke: white;
-}
-.blackLeft,
-.blackRight {
-  fill: black;
-  stroke: black;
 }
