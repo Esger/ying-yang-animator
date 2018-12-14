@@ -40,6 +40,8 @@ svg {
 .whiteRight {
   fill: white;
   stroke: white;
+  -webkit-transform: none !important;
+          transform: none !important;
 }
 .blackLeft,
 .blackRight {

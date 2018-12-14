@@ -1,6 +1,5 @@
 <template>
-    <require from="resources/value-converters/layer1-value-converter"></require>
-    <require from="resources/value-converters/layer2-value-converter"></require>
+    <require from="resources/value-converters/sorter-value-converter"></require>
     <div class="container"
          click.trigger="toggleAnimation()">
         <svg version="1.1"
@@ -12,7 +11,7 @@
              enable-background="new 0 0 400 400"
              xml:space="preserve">
             <g id="Layer_1">
-                <path repeat.for="part of parts | layer2"
+                <path repeat.for="part of parts | sorter:part.index:'ascending' & signal:'sorter-changed'"
                       data-order.bind="$index"
                       class="${part.classNames} ${timingClass}"
                       css="transform: rotate(${angle}deg); transition-duration: ${duration/1000 & oneTime}s;"

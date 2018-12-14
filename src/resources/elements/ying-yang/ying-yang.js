@@ -1,10 +1,13 @@
 
 import { inject } from 'aurelia-framework';
+import { BindingSignaler } from 'aurelia-templating-resources';
 import { EventAggregator } from 'aurelia-event-aggregator';
-@inject(EventAggregator)
+
+@inject(EventAggregator, BindingSignaler)
 export class YingYangCustomElement {
 
-    constructor(eventAggregator) {
+    constructor(eventAggregator, bindingSignaler) {
+        this._bindingSignaler = bindingSignaler;
         this._animate = false;
         this._cycleTime = 10000;
         this._rotationTime = this._cycleTime / 2;
@@ -20,21 +23,25 @@ export class YingYangCustomElement {
             {
                 d: this.paths[0].slice(),
                 classNames: 'part whiteLeft ',
+                index: 0,
                 id: 0
             },
             {
                 d: this.paths[1].slice(),
                 classNames: 'part whiteRight ',
+                index: 1,
                 id: 1
             },
             {
                 d: this.paths[0].slice(),
                 classNames: 'part blackLeft ',
+                index: 2,
                 id: 2
             },
             {
                 d: this.paths[1].slice(),
-                classNames: 'part blackLeft ',
+                classNames: 'part blackRight ',
+                index: 3,
                 id: 3
             }
         ];
@@ -48,6 +55,7 @@ export class YingYangCustomElement {
             if (this._done) { // twee events door twee segmenten
                 this._done = !this._done;
                 window.requestAnimationFrame(() => {
+                    this._setSortIndexes();
                     this.rotate();
                     this._done = !this._done;
                 });
@@ -61,6 +69,15 @@ export class YingYangCustomElement {
 
     detached() {
         document.removeEventListener('transitionend', this.handleTransitionEnd);
+    }
+
+    _setSortIndexes() {
+        let sortOrder = this.stageSortOrders[this._stepCounter % 4];
+        for (let i = 0; i < this.parts.length; i++) {
+            const part = this.parts[i];
+            part.index = sortOrder[part.id];
+        }
+        this._bindingSignaler.signal('sorter-changed');
     }
 
     rotate() {
