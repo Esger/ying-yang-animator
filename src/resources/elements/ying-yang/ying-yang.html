@@ -11,7 +11,7 @@
              enable-background="new 0 0 400 400"
              xml:space="preserve">
             <g id="Layer_1">
-                <path repeat.for="part of parts | sorter:part.index:'ascending' & signal:'sorter-changed'"
+                <path repeat.for="part of parts | sorter:'index':'ascending' & signal:'sorter-changed'"
                       data-order.bind="$index"
                       class="${part.classNames} ${timingClass}"
                       css="transform: rotate(${angle}deg); transition-duration: ${duration/1000 & oneTime}s;"
