@@ -9,6 +9,8 @@ body {
 .part {
   -webkit-transform-origin: center center;
   transform-origin: center center;
+  -webkit-transition-duration: 2500ms;
+          transition-duration: 2500ms;
   will-change: transform;
   stroke-width: 3;
 }
@@ -23,6 +25,14 @@ body {
 .blackRight {
   fill: black;
   stroke: black;
+}
+.ease-in {
+  -webkit-transition-timing-function: ease-in;
+          transition-timing-function: ease-in;
+}
+.ease-out {
+  -webkit-transition-timing-function: ease-out;
+          transition-timing-function: ease-out;
 }
 .container {
   width: 100vw;

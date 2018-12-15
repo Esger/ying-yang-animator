@@ -4,15 +4,14 @@ import { inject, bindable } from 'aurelia-framework';
 export class PartCustomElement {
     @bindable angle;
     @bindable classNames;
-    @bindable path;
+    @bindable index;
 
-    constructor(Element) {
-        this._element = Element;
-        this._$element = $(this._element);
+    constructor(element) {
+        this._element = element;
     }
 
     attached() {
-        console.log(this.angle, this.classNames, this.path);
+        this.type = (this.index % 2) ? 'closed' : 'open';
     }
 
 }

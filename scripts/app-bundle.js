@@ -22,8 +22,6 @@ define('app',['exports', 'jquery'], function (exports, _jquery) {
 
     var App = exports.App = function App() {
         _classCallCheck(this, App);
-
-        this.message = 'Hello World!';
     };
 });
 define('environment',["exports"], function (exports) {
@@ -156,12 +154,13 @@ define('resources/value-converters/sorter-value-converter',['exports'], function
         }
 
         SorterValueConverter.prototype.toView = function toView(array, propertyName, direction) {
-
-            var factor = direction === 'ascending' ? 1 : -1;
-            var sortedArray = array.slice(0).sort(function (a, b) {
-                return (a[propertyName] - b[propertyName]) * factor;
-            });
-            return sortedArray;
+            if (array) {
+                var factor = direction === 'ascending' ? 1 : -1;
+                var sortedArray = array.slice(0).sort(function (a, b) {
+                    return (a[propertyName] - b[propertyName]) * factor;
+                });
+                return sortedArray;
+            }
         };
 
         return SorterValueConverter;
@@ -227,21 +226,20 @@ define('resources/elements/part/part',['exports', 'aurelia-framework'], function
     var _dec, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3;
 
     var PartCustomElement = exports.PartCustomElement = (_dec = (0, _aureliaFramework.inject)(Element), _dec(_class = (_class2 = function () {
-        function PartCustomElement(Element) {
+        function PartCustomElement(element) {
             _classCallCheck(this, PartCustomElement);
 
             _initDefineProp(this, 'angle', _descriptor, this);
 
             _initDefineProp(this, 'classNames', _descriptor2, this);
 
-            _initDefineProp(this, 'path', _descriptor3, this);
+            _initDefineProp(this, 'index', _descriptor3, this);
 
-            this._element = Element;
-            this._$element = $(this._element);
+            this._element = element;
         }
 
         PartCustomElement.prototype.attached = function attached() {
-            console.log(this.angle, this.classNames, this.path);
+            this.type = this.index % 2 ? 'closed' : 'open';
         };
 
         return PartCustomElement;
@@ -251,7 +249,7 @@ define('resources/elements/part/part',['exports', 'aurelia-framework'], function
     }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'classNames', [_aureliaFramework.bindable], {
         enumerable: true,
         initializer: null
-    }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'path', [_aureliaFramework.bindable], {
+    }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'index', [_aureliaFramework.bindable], {
         enumerable: true,
         initializer: null
     })), _class2)) || _class);
@@ -297,31 +295,13 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
             _classCallCheck(this, YingYangCustomElement);
 
             this._bindingSignaler = bindingSignaler;
-            this._animate = false;
+            this.animate = false;
             this._cycleTime = 10000;
             this._rotationTime = this._cycleTime / 2;
             this._halfRotationTime = this._rotationTime / 2;
             this.angle = 0;
             this._stepCounter = 0;
             this._done = true;
-            this._paths = ["M197.419,399.968C88.153,398.583,0,309.594,0,200C0,89.543,89.543,0,200,0c0.863,0,1.721,0.021,2.581,0.033 C256.616,1.401,300,45.634,300,100c0,55.229-44.771,100-100,100c-55.229,0-100,44.771-100,100 C100,354.365,143.383,398.599,197.419,399.968z M200,66.666c-18.226,0-33,14.774-33,33s14.774,33,33,33c18.227,0,33-14.774,33-33 S218.227,66.666,200,66.666z", "M202.581,0.033C256.616,1.4,300,45.634,300,100c0,55.229-44.771, 100-100,100s-100,44.771-100,100 c0,54.365,43.383,98.6,97.419,99.968c0.86,0.011,1.718,0.032,2.581,0.032c110.457,0,200-89.543,200-200 C400,90.406,311.848,1.417,202.581,0.033z"];
-            this.parts = [{
-                path: this._paths[0].slice(),
-                classNames: 'part whiteLeft',
-                id: 0
-            }, {
-                path: this._paths[1].slice(),
-                classNames: 'part whiteRight',
-                id: 1
-            }, {
-                path: this._paths[0].slice(),
-                classNames: 'part blackLeft',
-                id: 2
-            }, {
-                path: this._paths[1].slice(),
-                classNames: 'part blackRight',
-                id: 3
-            }];
             this._stageSortOrders = [[0, 1, 2, 3], [1, 3, 2, 0], [2, 3, 0, 1], [2, 0, 1, 3]];
             this.handleTransitionEnd = function (e) {
                 if (_this._done) {
@@ -335,6 +315,23 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
         }
 
         YingYangCustomElement.prototype.attached = function attached() {
+            this.parts = [{
+                classNames: 'part whiteLeft ',
+                index: 0,
+                id: 0
+            }, {
+                classNames: 'part whiteRight ',
+                index: 1,
+                id: 1
+            }, {
+                classNames: 'part blackLeft ',
+                index: 2,
+                id: 2
+            }, {
+                classNames: 'part blackRight ',
+                index: 3,
+                id: 3
+            }];
             document.addEventListener('transitionend', this.handleTransitionEnd);
             console.log(this.parts);
         };
@@ -361,19 +358,12 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
         };
 
         YingYangCustomElement.prototype.rotate = function rotate() {
+            this._bindingSignaler.signal('sortOrder-changed');
             this._setSortIndexes();
-            if (this._animate) {
+            if (this.animate) {
                 this._stepCounter++;
                 this.angle = this._stepCounter * 180;
                 console.log(this._stepCounter, this.angle);
-            }
-        };
-
-        YingYangCustomElement.prototype.toggleAnimation = function toggleAnimation() {
-            this._animate = !this._animate;
-            if (this._animate) {
-                this._stepCounter = 0;
-                this.rotate();
             }
         };
 
@@ -3031,6 +3021,6 @@ define('aurelia-templating-resources/dynamic-element',['exports', 'aurelia-templ
   }
 });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/elements/ying-yang/ying-yang\"></require>\n    <ying-yang containerless></ying-yang>\n</template>"; });
-define('text!resources/elements/part/part.html', ['module'], function(module) { module.exports = "<template>\n    <path class=\"${classNames}\"\n          css=\"transform: rotate(${angle}deg);\"\n          xcss=\"transition-duration: ${duration/1000}s; transition-timing-function: ${timing}\"\n          d=\"${path}\"></path>\n</template>"; });
-define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/value-converters/sorter-value-converter\"></require>\n    <require from=\"resources/elements/part/part\"></require>\n    <div class=\"container\"\n         click.trigger=\"toggleAnimation()\">\n        <svg version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g id=\"Layer_1\">\n                <part repeat.for=\"part of parts | sorter:part.index:'ascending'\"\n                      class-names.bind=\"part.classNames\"\n                      angle.bind=\"angle\"\n                      path.bind=\"part.path\"\n                      containerless></part>\n            </g>\n        </svg>\n    </div>\n\n</template>"; });
+define('text!resources/elements/part/part.html', ['module'], function(module) { module.exports = "<template>\n    <svg>\n        <path class=\"${classNames}\"\n              css=\"transform: rotate(${angle}deg);\"\n              d=\"${(type == 'closed') ? 'M202.581,0.033C256.616,1.4,300,45.634,300,100c0,55.229-44.771, 100-100,100s-100,44.771-100,100 c0,54.365,43.383,98.6,97.419,99.968c0.86,0.011,1.718,0.032,2.581,0.032c110.457,0,200-89.543,200-200 C400,90.406,311.848,1.417,202.581,0.033z' : 'M197.419,399.968C88.153,398.583,0,309.594,0,200C0,89.543,89.543,0,200,0c0.863,0,1.721,0.021,2.581,0.033 C256.616,1.401,300,45.634,300,100c0,55.229-44.771,100-100,100c-55.229,0-100,44.771-100,100 C100,354.365,143.383,398.599,197.419,399.968z M200,66.666c-18.226,0-33,14.774-33,33s14.774,33,33,33c18.227,0,33-14.774,33-33 S218.227,66.666,200,66.666z'}\"></path>\n    </svg>\n</template>"; });
+define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/value-converters/sorter-value-converter\"></require>\n    <require from=\"resources/elements/part/part\"></require>\n    <div class=\"container\"\n         click.trigger=\"rotate()\">\n        <svg version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g id=\"Layer_1\">\n                <svg repeat.for=\"part of parts | sorter:'index':'ascending' & signal:'sorter-changed'\"\n                     x=\"0\"\n                     y=\"0\">\n                    <part if.bind=\"$index == part.index\"\n                          class-names=\"${($index == part.index) ? part.classNames : ''}\"\n                          angle=\"${($index == part.index) ? angle : ''}\"\n                          index=\"${($index == part.index) ? $index : ''}\"\n                          containerless></part>\n\n                </svg>\n            </g>\n        </svg>\n    </div>\n\n</template>"; });
 //# sourceMappingURL=app-bundle.js.map

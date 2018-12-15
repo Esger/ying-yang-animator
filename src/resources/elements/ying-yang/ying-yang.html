@@ -2,7 +2,7 @@
     <require from="resources/value-converters/sorter-value-converter"></require>
     <require from="resources/elements/part/part"></require>
     <div class="container"
-         click.trigger="toggleAnimation()">
+         click.trigger="rotate()">
         <svg version="1.1"
              x="0px"
              y="0px"
@@ -12,11 +12,16 @@
              enable-background="new 0 0 400 400"
              xml:space="preserve">
             <g id="Layer_1">
-                <part repeat.for="part of parts | sorter:part.index:'ascending'"
-                      class-names.bind="part.classNames"
-                      angle.bind="angle"
-                      path.bind="part.path"
-                      containerless></part>
+                <svg repeat.for="part of parts | sorter:'index':'ascending' & signal:'sorter-changed'"
+                     x="0"
+                     y="0">
+                    <part if.bind="$index == part.index"
+                          class-names="${($index == part.index) ? part.classNames : ''}"
+                          angle="${($index == part.index) ? angle : ''}"
+                          index="${($index == part.index) ? $index : ''}"
+                          containerless></part>
+
+                </svg>
             </g>
         </svg>
     </div>
