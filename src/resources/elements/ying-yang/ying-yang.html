@@ -11,14 +11,15 @@
              viewBox="0 0 400 400"
              enable-background="new 0 0 400 400"
              xml:space="preserve">
-            <g id="Layer_1">
-                <svg repeat.for="part of parts | sorter:'index':'ascending' & signal:'sorter-changed'"
+            <g repeat.for="group of 4"
+               id="${'Layer_' + group}">
+                <svg repeat.for="part of $parent.parts & signal:'sorter-changed'"
                      x="0"
                      y="0">
-                    <part if.bind="$index == part.index"
-                          class-names="${($index == part.index) ? part.classNames : ''}"
-                          angle="${($index == part.index) ? angle : ''}"
-                          index="${($index == part.index) ? $index : ''}"
+                    <part class-names.bind="($parent.group == part.index) ? part.classNames : 'aurelia-hide' & signal:'sorter-changed'"
+                          angle.bind="($index == part.index) ? angle : '' & signal:'sorter-changed'"
+                          index.bind="($index == part.index) ? $index : '' & signal:'sorter-changed'"
+                          timing-class="($index == part.index) ? timingClass : '' & signal:'sorter-changed'"
                           containerless></part>
 
                 </svg>

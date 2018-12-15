@@ -1,6 +1,7 @@
 import { inject } from 'aurelia-framework';
 import { BindingSignaler } from 'aurelia-templating-resources';
 import { EventAggregator } from 'aurelia-event-aggregator';
+import { computedFrom } from 'aurelia-framework';
 
 @inject(EventAggregator, BindingSignaler)
 export class YingYangCustomElement {
@@ -10,8 +11,9 @@ export class YingYangCustomElement {
         this.animate = false;
         this._cycleTime = 10000;
         this._rotationTime = this._cycleTime / 2;
-        this._halfRotationTime = this._rotationTime / 2;
+        this.duration = this._rotationTime / 2;
         this.angle = 0;
+        this.timingClass = 'ease-in';
         this._stepCounter = 0;
         this._done = true;
         this._stageSortOrders = [
@@ -34,7 +36,7 @@ export class YingYangCustomElement {
     attached() {
         this.parts = [
             {
-                classNames: 'part whiteLeft ',
+                classNames: 'part whiteLeft',
                 index: 0,
                 id: 0
             },
@@ -44,12 +46,12 @@ export class YingYangCustomElement {
                 id: 1
             },
             {
-                classNames: 'part blackLeft ',
+                classNames: 'part blackLeft ease-in',
                 index: 2,
                 id: 2
             },
             {
-                classNames: 'part blackRight ',
+                classNames: 'part blackRight ease-in',
                 index: 3,
                 id: 3
             }
@@ -80,24 +82,15 @@ export class YingYangCustomElement {
     }
 
     rotate() {
-        // this._animate = !this._animate;
+        this._animate = !this._animate;
         this._bindingSignaler.signal('sortOrder-changed');
         this._setSortIndexes();
-        if (this.animate) {
+        if (this._animate) {
             this._stepCounter++;
+            this.timingClass = (this._stepCounter % 2 == 1) ? 'ease-in' : 'ease-out';
             this.angle = this._stepCounter * 180;
             console.log(this._stepCounter, this.angle);
         }
     }
-
-    get duration() {
-        return this._halfRotationTime;
-    }
-
-    get timing() {
-        let timing = (this._stepCounter % 2 == 1) ? 'ease-in' : 'ease-out';
-        return timing;
-    }
-
 
 }
