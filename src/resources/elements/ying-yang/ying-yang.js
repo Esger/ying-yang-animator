@@ -14,6 +14,7 @@ export class YingYangCustomElement {
         this._rotationTime = this._cycleTime / 2;
         this.timingClass = 'ease-in';
         this.duration = this._rotationTime / 2;
+        this._stepCounter = 0;
         this.angle = 0;
         this._done = true;
         this.paths = [
@@ -24,56 +25,54 @@ export class YingYangCustomElement {
             {
                 d: this.paths[0].slice(),
                 classNames: 'part whiteLeft ',
-                index: 0,
+                layer: 0,
                 id: 0
             },
             {
                 d: this.paths[1].slice(),
                 classNames: 'part whiteRight ',
-                index: 1,
+                layer: 1,
                 id: 1
             },
             {
                 d: this.paths[0].slice(),
                 classNames: 'part blackLeft ',
-                index: 2,
+                layer: 2,
                 id: 2
             },
             {
                 d: this.paths[1].slice(),
                 classNames: 'part blackRight ',
-                index: 3,
+                layer: 3,
                 id: 3
-            }
+            },
         ];
         this.stageSortOrders = [
-            [0, 1, 2, 3],
-            [1, 3, 2, 0],
-            [2, 3, 0, 1],
-            [2, 0, 1, 3]
+            [3, 1, 2, 0],
+            [2, 0, 3, 1],
+            [0, 2, 1, 3],
+            [1, 3, 0, 2]
         ];
         this.handleTransitionEnd = (event) => {
+            this._setSortIndexes();
             setTimeout(() => {
-                this._setSortIndexes();
-                this.rotate();
+                this._rotate();
             });
         };
     }
 
-    // attached() {
-    //     // Alleen de eerste trigger honoreren
-    //     if (this._element.id == 'Layer_1_0') {
-    //     }
-    // }
-
-    listenToMyTransitionEnd(event) {
-        if (!this._transitionEndListener) {
-            this._transitionEndListener = () => {
-                document.addEventListener('transitionend', this.handleTransitionEnd);
-                return 'doit';
-            };
-        }
-        return 'notforme';
+    attached() {
+        this._setSortIndexes();
+        this._transitionEndListener = document.addEventListener('transitionend', (event) => {
+            let $element = $(event.target);
+            let trigger = $element.hasClass('blackLeft') && !$element.hasClass('aurelia-hide');
+            if (trigger) {
+                this.handleTransitionEnd(event);
+            }
+        });
+        setTimeout(() => {
+            this._rotate();
+        });
     }
 
     detached() {
@@ -86,28 +85,21 @@ export class YingYangCustomElement {
         let sortOrder = this.stageSortOrders[this._stepCounter % 4];
         for (let i = 0; i < this.parts.length; i++) {
             const part = this.parts[i];
-            part.index = sortOrder[part.id];
+            part.layer = sortOrder[part.id];
         }
         this._bindingSignaler.signal('sorter-changed');
     }
 
-    rotate() {
-        if (this._animate) {
-            this._stepCounter++;
-            this.timingClass = (this._stepCounter % 2 == 1) ? 'ease-in' : 'ease-out';
-            this.angle = this._stepCounter * 180;
-            console.log(this._stepCounter, this.timingClass);
-        }
+    _rotate() {
+        this._stepCounter++;
+        this.timingClass = (this._stepCounter % 2 == 1) ? 'ease-in' : 'ease-out';
+        this.angle = this._stepCounter * 180;
     }
 
     toggleAnimation() {
-        this._animate = !this._animate;
-        if (this._animate) {
-            this.angle = 0;
-            this._stepCounter = 0;
-            this.timingClass = 'ease-in';
-            this.rotate();
-        }
+        // this.angle = 0;
+        // this._stepCounter = 0;
+        this._rotate();
     }
 
 }

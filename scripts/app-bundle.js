@@ -1,21 +1,30 @@
-define('app',['exports'], function (exports) {
-  'use strict';
+define('app',['exports', 'jquery'], function (exports, _jquery) {
+    'use strict';
 
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+    exports.App = undefined;
 
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
+    var _jquery2 = _interopRequireDefault(_jquery);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
     }
-  }
 
-  var App = exports.App = function App() {
-    _classCallCheck(this, App);
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
 
-    this.message = 'Hello World!';
-  };
+    var App = exports.App = function App() {
+        _classCallCheck(this, App);
+
+        this.message = 'Ying Yang!';
+    };
 });
 define('environment',["exports"], function (exports) {
   "use strict";
@@ -29,43 +38,43 @@ define('environment',["exports"], function (exports) {
   };
 });
 define('main',['exports', './environment'], function (exports, _environment) {
-  'use strict';
+    'use strict';
 
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.configure = configure;
-
-  var _environment2 = _interopRequireDefault(_environment);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      default: obj
-    };
-  }
-
-  Promise.config({
-    longStackTraces: _environment2.default.debug,
-    warnings: {
-      wForgottenReturn: false
-    }
-  });
-
-  function configure(aurelia) {
-    aurelia.use.standardConfiguration().feature('resources');
-
-    if (_environment2.default.debug) {
-      aurelia.use.developmentLogging();
-    }
-
-    if (_environment2.default.testing) {
-      aurelia.use.plugin('aurelia-testing');
-    }
-
-    aurelia.start().then(function () {
-      return aurelia.setRoot();
+    Object.defineProperty(exports, "__esModule", {
+        value: true
     });
-  }
+    exports.configure = configure;
+
+    var _environment2 = _interopRequireDefault(_environment);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    Promise.config({
+        longStackTraces: _environment2.default.debug,
+        warnings: {
+            wForgottenReturn: false
+        }
+    });
+
+    function configure(aurelia) {
+        aurelia.use.standardConfiguration().feature('resources');
+
+        if (_environment2.default.debug) {
+            aurelia.use.developmentLogging();
+        }
+
+        if (_environment2.default.testing) {
+            aurelia.use.plugin('aurelia-testing');
+        }
+
+        aurelia.start().then(function () {
+            return aurelia.setRoot();
+        });
+    }
 });
 define('resources/index',["exports"], function (exports) {
   "use strict";
@@ -153,109 +162,6 @@ define('resources/value-converters/sorter-value-converter',["exports"], function
         return SorterValueConverter;
     }();
 });
-define('resources/elements/part/part',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
-    'use strict';
-
-    Object.defineProperty(exports, "__esModule", {
-        value: true
-    });
-    exports.PartCustomElement = undefined;
-
-    function _initDefineProp(target, property, descriptor, context) {
-        if (!descriptor) return;
-        Object.defineProperty(target, property, {
-            enumerable: descriptor.enumerable,
-            configurable: descriptor.configurable,
-            writable: descriptor.writable,
-            value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-        });
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-        var desc = {};
-        Object['ke' + 'ys'](descriptor).forEach(function (key) {
-            desc[key] = descriptor[key];
-        });
-        desc.enumerable = !!desc.enumerable;
-        desc.configurable = !!desc.configurable;
-
-        if ('value' in desc || desc.initializer) {
-            desc.writable = true;
-        }
-
-        desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-            return decorator(target, property, desc) || desc;
-        }, desc);
-
-        if (context && desc.initializer !== void 0) {
-            desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-            desc.initializer = undefined;
-        }
-
-        if (desc.initializer === void 0) {
-            Object['define' + 'Property'](target, property, desc);
-            desc = null;
-        }
-
-        return desc;
-    }
-
-    function _initializerWarningHelper(descriptor, context) {
-        throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-    }
-
-    var _dec, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4;
-
-    var PartCustomElement = exports.PartCustomElement = (_dec = (0, _aureliaFramework.inject)(Element), _dec(_class = (_class2 = function () {
-        function PartCustomElement(element) {
-            _classCallCheck(this, PartCustomElement);
-
-            _initDefineProp(this, 'angle', _descriptor, this);
-
-            _initDefineProp(this, 'classNames', _descriptor2, this);
-
-            _initDefineProp(this, 'index', _descriptor3, this);
-
-            _initDefineProp(this, 'timingClass', _descriptor4, this);
-
-            this._element = element;
-        }
-
-        PartCustomElement.prototype.attached = function attached() {
-            if (this.classList) {
-                this.classList = this.classNames.split(' ').pop().push(this.timingClass).join(' ');
-            } else {
-                this.classList = this.classNames;
-            }
-            this.type = this.index % 2 ? 'closed' : 'open';
-            console.log('attached', this.classList);
-        };
-
-        PartCustomElement.prototype.detached = function detached() {
-            console.log('detached');
-        };
-
-        return PartCustomElement;
-    }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'angle', [_aureliaFramework.bindable], {
-        enumerable: true,
-        initializer: null
-    }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'classNames', [_aureliaFramework.bindable], {
-        enumerable: true,
-        initializer: null
-    }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'index', [_aureliaFramework.bindable], {
-        enumerable: true,
-        initializer: null
-    }), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, 'timingClass', [_aureliaFramework.bindable], {
-        enumerable: true,
-        initializer: null
-    })), _class2)) || _class);
-});
 define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework', 'aurelia-templating-resources', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaTemplatingResources, _aureliaEventAggregator) {
     'use strict';
 
@@ -285,49 +191,54 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
             this._rotationTime = this._cycleTime / 2;
             this.timingClass = 'ease-in';
             this.duration = this._rotationTime / 2;
+            this._stepCounter = 0;
             this.angle = 0;
             this._done = true;
             this.paths = ["M197.419,399.968C88.153,398.583,0,309.594,0,200C0,89.543,89.543,0,200,0c0.863,0,1.721,0.021,2.581,0.033 C256.616,1.401,300,45.634,300,100c0,55.229-44.771,100-100,100c-55.229,0-100,44.771-100,100 C100,354.365,143.383,398.599,197.419,399.968z M200,66.666c-18.226,0-33,14.774-33,33s14.774,33,33,33c18.227,0,33-14.774,33-33 S218.227,66.666,200,66.666z", "M202.581,0.033C256.616,1.4,300,45.634,300,100c0,55.229-44.771, 100-100,100s-100,44.771-100,100 c0,54.365,43.383,98.6,97.419,99.968c0.86,0.011,1.718,0.032,2.581,0.032c110.457,0,200-89.543,200-200 C400,90.406,311.848,1.417,202.581,0.033z"];
             this.parts = [{
                 d: this.paths[0].slice(),
                 classNames: 'part whiteLeft ',
-                index: 0,
+                layer: 0,
                 id: 0
             }, {
                 d: this.paths[1].slice(),
                 classNames: 'part whiteRight ',
-                index: 1,
+                layer: 1,
                 id: 1
             }, {
                 d: this.paths[0].slice(),
                 classNames: 'part blackLeft ',
-                index: 2,
+                layer: 2,
                 id: 2
             }, {
                 d: this.paths[1].slice(),
                 classNames: 'part blackRight ',
-                index: 3,
+                layer: 3,
                 id: 3
             }];
-            this.stageSortOrders = [[0, 1, 2, 3], [1, 3, 2, 0], [2, 3, 0, 1], [2, 0, 1, 3]];
+            this.stageSortOrders = [[3, 1, 2, 0], [2, 0, 3, 1], [0, 2, 1, 3], [1, 3, 0, 2]];
             this.handleTransitionEnd = function (event) {
+                _this._setSortIndexes();
                 setTimeout(function () {
-                    _this._setSortIndexes();
-                    _this.rotate();
+                    _this._rotate();
                 });
             };
         }
 
-        YingYangCustomElement.prototype.listenToMyTransitionEnd = function listenToMyTransitionEnd(event) {
+        YingYangCustomElement.prototype.attached = function attached() {
             var _this2 = this;
 
-            if (!this._transitionEndListener) {
-                this._transitionEndListener = function () {
-                    document.addEventListener('transitionend', _this2.handleTransitionEnd);
-                    return 'doit';
-                };
-            }
-            return 'notforme';
+            this._setSortIndexes();
+            this._transitionEndListener = document.addEventListener('transitionend', function (event) {
+                var $element = $(event.target);
+                var trigger = $element.hasClass('blackLeft') && !$element.hasClass('aurelia-hide');
+                if (trigger) {
+                    _this2.handleTransitionEnd(event);
+                }
+            });
+            setTimeout(function () {
+                _this2._rotate();
+            });
         };
 
         YingYangCustomElement.prototype.detached = function detached() {
@@ -340,28 +251,19 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
             var sortOrder = this.stageSortOrders[this._stepCounter % 4];
             for (var i = 0; i < this.parts.length; i++) {
                 var part = this.parts[i];
-                part.index = sortOrder[part.id];
+                part.layer = sortOrder[part.id];
             }
             this._bindingSignaler.signal('sorter-changed');
         };
 
-        YingYangCustomElement.prototype.rotate = function rotate() {
-            if (this._animate) {
-                this._stepCounter++;
-                this.timingClass = this._stepCounter % 2 == 1 ? 'ease-in' : 'ease-out';
-                this.angle = this._stepCounter * 180;
-                console.log(this._stepCounter, this.timingClass);
-            }
+        YingYangCustomElement.prototype._rotate = function _rotate() {
+            this._stepCounter++;
+            this.timingClass = this._stepCounter % 2 == 1 ? 'ease-in' : 'ease-out';
+            this.angle = this._stepCounter * 180;
         };
 
         YingYangCustomElement.prototype.toggleAnimation = function toggleAnimation() {
-            this._animate = !this._animate;
-            if (this._animate) {
-                this.angle = 0;
-                this._stepCounter = 0;
-                this.timingClass = 'ease-in';
-                this.rotate();
-            }
+            this._rotate();
         };
 
         return YingYangCustomElement;
@@ -3005,6 +2907,5 @@ define('aurelia-templating-resources/dynamic-element',['exports', 'aurelia-templ
   }
 });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/elements/ying-yang/ying-yang\"></require>\n    <ying-yang containerless></ying-yang>\n</template>"; });
-define('text!resources/elements/part/part.html', ['module'], function(module) { module.exports = "<template>\n    <svg>\n        <path class=\"${classList}\"\n              css=\"transform: rotate(${angle}deg);\"\n              d=\"${(type == 'closed') ? 'M202.581,0.033C256.616,1.4,300,45.634,300,100c0,55.229-44.771, 100-100,100s-100,44.771-100,100 c0,54.365,43.383,98.6,97.419,99.968c0.86,0.011,1.718,0.032,2.581,0.032c110.457,0,200-89.543,200-200 C400,90.406,311.848,1.417,202.581,0.033z' : 'M197.419,399.968C88.153,398.583,0,309.594,0,200C0,89.543,89.543,0,200,0c0.863,0,1.721,0.021,2.581,0.033 C256.616,1.401,300,45.634,300,100c0,55.229-44.771,100-100,100c-55.229,0-100,44.771-100,100 C100,354.365,143.383,398.599,197.419,399.968z M200,66.666c-18.226,0-33,14.774-33,33s14.774,33,33,33c18.227,0,33-14.774,33-33 S218.227,66.666,200,66.666z'}\"></path>\n    </svg>\n</template>"; });
-define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/value-converters/sorter-value-converter\"></require>\n    <div class=\"container\"\n         click.trigger=\"toggleAnimation()\">\n        <svg version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g repeat.for=\"group of 4\"\n               id=\"Layer_1_${group}\">\n                <path repeat.for=\"part of parts | sorter:'index':'ascending' & signal:'sorter-changed'\"\n                      data-listen-to-me=\"${($index == 2) && listenToMyTransitionEnd()}\"\n                      data-order.bind=\"$index\"\n                      class=\"${part.classNames} ${timingClass} ${(group == part.index) ? '' : 'aurelia-hide'} ${''}\"\n                      css=\"transform: rotate(${angle}deg); transition-duration: ${duration/1000 & oneTime}s;\"\n                      d=\"${part.d}\"></path>\n            </g>\n        </svg>\n    </div>\n\n</template>"; });
+define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/value-converters/sorter-value-converter\"></require>\n    <div class=\"container\"\n         click.trigger=\"toggleAnimation()\">\n        <svg version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g repeat.for=\"layer of 4\"\n               id=\"Layer_${layer}\">\n                <path repeat.for=\"part of parts\"\n                      data-layer.bind=\"part.layer\"\n                      class=\"${part.classNames} ${timingClass} ${(layer == part.layer) ? '' : 'aurelia-hide'} ${''}\"\n                      css=\"transform: rotate(${angle}deg); transition-duration: ${duration/1000 & oneTime}s;\"\n                      d=\"${part.d}\"></path>\n            </g>\n        </svg>\n    </div>\n\n</template>"; });
 //# sourceMappingURL=app-bundle.js.map

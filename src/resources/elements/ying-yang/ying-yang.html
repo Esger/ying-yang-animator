@@ -10,12 +10,11 @@
              viewBox="0 0 400 400"
              enable-background="new 0 0 400 400"
              xml:space="preserve">
-            <g repeat.for="group of 4"
-               id="Layer_1_${group}">
-                <path repeat.for="part of parts | sorter:'index':'ascending' & signal:'sorter-changed'"
-                      data-listen-to-me="${($index == 2) && listenToMyTransitionEnd()}"
-                      data-order.bind="$index"
-                      class="${part.classNames} ${timingClass} ${(group == part.index) ? '' : 'aurelia-hide'} ${''}"
+            <g repeat.for="layer of 4"
+               id="Layer_${layer}">
+                <path repeat.for="part of parts"
+                      data-layer.bind="part.layer"
+                      class="${part.classNames} ${timingClass} ${(layer == part.layer) ? '' : 'aurelia-hide'} ${''}"
                       css="transform: rotate(${angle}deg); transition-duration: ${duration/1000 & oneTime}s;"
                       d="${part.d}"></path>
             </g>
