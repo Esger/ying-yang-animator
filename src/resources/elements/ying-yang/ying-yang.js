@@ -3,10 +3,11 @@ import { inject } from 'aurelia-framework';
 import { BindingSignaler } from 'aurelia-templating-resources';
 import { EventAggregator } from 'aurelia-event-aggregator';
 
-@inject(EventAggregator, BindingSignaler)
+@inject(EventAggregator, BindingSignaler, Element)
 export class YingYangCustomElement {
 
-    constructor(eventAggregator, bindingSignaler) {
+    constructor(eventAggregator, bindingSignaler, element) {
+        this._element = element;
         this._bindingSignaler = bindingSignaler;
         this._animate = false;
         this._cycleTime = 10000;
@@ -51,24 +52,34 @@ export class YingYangCustomElement {
             [2, 3, 0, 1],
             [2, 0, 1, 3]
         ];
-        this.handleTransitionEnd = e => {
-            if (this._done) { // twee events door twee segmenten
-                this._done = !this._done;
-                window.requestAnimationFrame(() => {
-                    this._setSortIndexes();
-                    this.rotate();
-                    this._done = !this._done;
-                });
-            }
+        this.handleTransitionEnd = (event) => {
+            setTimeout(() => {
+                this._setSortIndexes();
+                this.rotate();
+            });
         };
     }
 
-    attached() {
-        document.addEventListener('transitionend', this.handleTransitionEnd);
+    // attached() {
+    //     // Alleen de eerste trigger honoreren
+    //     if (this._element.id == 'Layer_1_0') {
+    //     }
+    // }
+
+    listenToMyTransitionEnd(event) {
+        if (!this._transitionEndListener) {
+            this._transitionEndListener = () => {
+                document.addEventListener('transitionend', this.handleTransitionEnd);
+                return 'doit';
+            };
+        }
+        return 'notforme';
     }
 
     detached() {
-        document.removeEventListener('transitionend', this.handleTransitionEnd);
+        if (this._transitionEndListener) {
+            document.removeEventListener('transitionend', this.handleTransitionEnd);
+        }
     }
 
     _setSortIndexes() {
@@ -92,7 +103,9 @@ export class YingYangCustomElement {
     toggleAnimation() {
         this._animate = !this._animate;
         if (this._animate) {
+            this.angle = 0;
             this._stepCounter = 0;
+            this.timingClass = 'ease-in';
             this.rotate();
         }
     }
