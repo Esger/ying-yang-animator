@@ -48,3 +48,10 @@ svg {
   fill: black;
   stroke: black;
 }
+.hint {
+  position: absolute;
+  bottom: 1vmin;
+  left: 1vmin;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 5vmin;
+}

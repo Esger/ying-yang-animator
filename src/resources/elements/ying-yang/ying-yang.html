@@ -1,6 +1,8 @@
 <template>
     <div class="container"
-         click.delegate="toggleAnimation()">
+         click.delegate="toggleAnimation()"
+         touchstart.delegate="setIsTouch()">
+        <h1 class="hint">${isTouch ? 'Tap' : 'Click'}</h1>
         <svg show.bind="animate"
              version="1.1"
              x="0px"

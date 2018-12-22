@@ -6,6 +6,7 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 export class YingYangCustomElement {
 
     constructor(eventAggregator, element) {
+        this._isTouch = false;
         this._element = element;
         this.animate = true;
         this._triggered = false;
@@ -87,6 +88,10 @@ export class YingYangCustomElement {
 
     detached() {
         this._removeTranitionEndLister();
+    }
+
+    setIsTouch() {
+        this._isTouch = true;
     }
 
     _start() {
