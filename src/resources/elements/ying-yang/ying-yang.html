@@ -1,7 +1,10 @@
 <template>
     <div class="container"
-         click.trigger="toggleAnimation()">
-        <svg version="1.1"
+         click.delegate="toggleAnimation()"
+         touchstart.delegate="setIsTouch()">
+        <h1 class="hint">${isTouch ? 'Tap' : 'Click'}</h1>
+        <svg show.bind="animate"
+             version="1.1"
              x="0px"
              y="0px"
              width="400px"
@@ -12,9 +15,9 @@
             <g repeat.for="layer of 4"
                id="Layer_${layer}">
                 <path repeat.for="part of parts"
-                      data-layer.bind="part.layer"
-                      class="${part.classNames} ${timingClass} ${(layer == part.layer) ? '' : 'aurelia-hide'} ${''}"
-                      css="transform: rotate(${angle}deg); transition-duration: ${duration/1000 & oneTime}s;"
+                      data-layer="${part.layer}"
+                      class="${part.classNames} ${timingClass} ${(layer == part.layer) ? '' : 'aurelia-hide'}"
+                      css="transform: rotate(${angle}deg); transition-duration: ${duration/1000}s;"
                       d="${part.d}"></path>
             </g>
         </svg>
