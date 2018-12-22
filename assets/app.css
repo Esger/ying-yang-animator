@@ -52,7 +52,11 @@ svg {
   position: absolute;
   bottom: 1vmin;
   left: 5vmin;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 25vmin;
+  color: rgba(255, 255, 255, 0.1);
+  font-size: 10vmin;
   margin: 0;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }

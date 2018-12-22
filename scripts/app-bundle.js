@@ -107,7 +107,6 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
 
             _classCallCheck(this, YingYangCustomElement);
 
-            this._isTouch = false;
             this._element = element;
             this.animate = true;
             this._triggered = false;
@@ -171,10 +170,6 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
 
         YingYangCustomElement.prototype.detached = function detached() {
             this._removeTranitionEndLister();
-        };
-
-        YingYangCustomElement.prototype.setIsTouch = function setIsTouch() {
-            this._isTouch = true;
         };
 
         YingYangCustomElement.prototype._start = function _start() {
@@ -247,5 +242,5 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
     }()) || _class);
 });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/elements/ying-yang/ying-yang\"></require>\n    <ying-yang containerless></ying-yang>\n</template>"; });
-define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"container\"\n         click.delegate=\"toggleAnimation()\"\n         touchstart.delegate=\"setIsTouch()\">\n        <h1 class=\"hint\">${isTouch ? 'Tap' : 'Click'}</h1>\n        <svg show.bind=\"animate\"\n             version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g repeat.for=\"layer of 4\"\n               id=\"Layer_${layer}\">\n                <path repeat.for=\"part of parts\"\n                      data-layer=\"${part.layer}\"\n                      class=\"${part.classNames} ${timingClass} ${(layer == part.layer) ? '' : 'aurelia-hide'}\"\n                      css=\"transform: rotate(${angle}deg); transition-duration: ${duration/1000}s;\"\n                      d=\"${part.d}\"></path>\n            </g>\n        </svg>\n    </div>\n\n</template>"; });
+define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"container\"\n         click.delegate=\"toggleAnimation()\"\n         touchstart.delegate=\"toggleAnimation()\">\n        <h1 class=\"hint\">Change animation</h1>\n        <svg show.bind=\"animate\"\n             version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g repeat.for=\"layer of 4\"\n               id=\"Layer_${layer}\">\n                <path repeat.for=\"part of parts\"\n                      data-layer=\"${part.layer}\"\n                      class=\"${part.classNames} ${timingClass} ${(layer == part.layer) ? '' : 'aurelia-hide'}\"\n                      css=\"transform: rotate(${angle}deg); transition-duration: ${duration/1000}s;\"\n                      d=\"${part.d}\"></path>\n            </g>\n        </svg>\n    </div>\n</template>"; });
 //# sourceMappingURL=app-bundle.js.map

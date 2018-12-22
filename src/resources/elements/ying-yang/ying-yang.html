@@ -1,8 +1,8 @@
 <template>
     <div class="container"
          click.delegate="toggleAnimation()"
-         touchstart.delegate="setIsTouch()">
-        <h1 class="hint">${isTouch ? 'Tap' : 'Click'}</h1>
+         touchstart.delegate="toggleAnimation()">
+        <h1 class="hint">Change animation</h1>
         <svg show.bind="animate"
              version="1.1"
              x="0px"
@@ -22,5 +22,4 @@
             </g>
         </svg>
     </div>
-
 </template>
