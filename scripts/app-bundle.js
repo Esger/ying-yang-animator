@@ -162,7 +162,7 @@ define('resources/value-converters/sorter-value-converter',["exports"], function
         return SorterValueConverter;
     }();
 });
-define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework', 'aurelia-templating-resources', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaTemplatingResources, _aureliaEventAggregator) {
+define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaEventAggregator) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -178,14 +178,13 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
 
     var _dec, _class;
 
-    var YingYangCustomElement = exports.YingYangCustomElement = (_dec = (0, _aureliaFramework.inject)(_aureliaEventAggregator.EventAggregator, _aureliaTemplatingResources.BindingSignaler, Element), _dec(_class = function () {
-        function YingYangCustomElement(eventAggregator, bindingSignaler, element) {
+    var YingYangCustomElement = exports.YingYangCustomElement = (_dec = (0, _aureliaFramework.inject)(_aureliaEventAggregator.EventAggregator, Element), _dec(_class = function () {
+        function YingYangCustomElement(eventAggregator, element) {
             var _this = this;
 
             _classCallCheck(this, YingYangCustomElement);
 
             this._element = element;
-            this._bindingSignaler = bindingSignaler;
             this._animate = false;
             this._cycleTime = 10000;
             this._rotationTime = this._cycleTime / 2;
@@ -216,7 +215,6 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
                 layer: 3,
                 id: 3
             }];
-            this.stageSortOrders = [[3, 1, 2, 0], [2, 0, 3, 1], [0, 2, 1, 3], [1, 3, 0, 2]];
             this.handleTransitionEnd = function (event) {
                 _this._setSortIndexes();
                 setTimeout(function () {
@@ -248,12 +246,12 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
         };
 
         YingYangCustomElement.prototype._setSortIndexes = function _setSortIndexes() {
-            var sortOrder = this.stageSortOrders[this._stepCounter % 4];
+            var stageSortOrders = [[3, 1, 2, 0], [2, 0, 3, 1], [0, 2, 1, 3], [1, 3, 0, 2]];
+            var sortOrder = stageSortOrders[this._stepCounter % 4];
             for (var i = 0; i < this.parts.length; i++) {
                 var part = this.parts[i];
                 part.layer = sortOrder[part.id];
             }
-            this._bindingSignaler.signal('sorter-changed');
         };
 
         YingYangCustomElement.prototype._rotate = function _rotate() {

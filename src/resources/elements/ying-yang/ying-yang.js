@@ -1,14 +1,12 @@
 
 import { inject } from 'aurelia-framework';
-import { BindingSignaler } from 'aurelia-templating-resources';
 import { EventAggregator } from 'aurelia-event-aggregator';
 
-@inject(EventAggregator, BindingSignaler, Element)
+@inject(EventAggregator, Element)
 export class YingYangCustomElement {
 
-    constructor(eventAggregator, bindingSignaler, element) {
+    constructor(eventAggregator, element) {
         this._element = element;
-        this._bindingSignaler = bindingSignaler;
         this._animate = false;
         this._cycleTime = 10000;
         this._rotationTime = this._cycleTime / 2;
@@ -47,12 +45,6 @@ export class YingYangCustomElement {
                 id: 3
             },
         ];
-        this.stageSortOrders = [
-            [3, 1, 2, 0],
-            [2, 0, 3, 1],
-            [0, 2, 1, 3],
-            [1, 3, 0, 2]
-        ];
         this.handleTransitionEnd = (event) => {
             this._setSortIndexes();
             setTimeout(() => {
@@ -82,12 +74,17 @@ export class YingYangCustomElement {
     }
 
     _setSortIndexes() {
-        let sortOrder = this.stageSortOrders[this._stepCounter % 4];
+        let stageSortOrders = [
+            [3, 1, 2, 0],
+            [2, 0, 3, 1],
+            [0, 2, 1, 3],
+            [1, 3, 0, 2]
+        ];
+        let sortOrder = stageSortOrders[this._stepCounter % 4];
         for (let i = 0; i < this.parts.length; i++) {
             const part = this.parts[i];
             part.layer = sortOrder[part.id];
         }
-        this._bindingSignaler.signal('sorter-changed');
     }
 
     _rotate() {
