@@ -10,21 +10,36 @@ svg {
     overflow: visible;
 }
 
+.part {
+    -webkit-transform-origin: center center;
+    transform-origin        : center center;
+    will-change             : transform;
+    stroke-width            : 1;
+}
+
+.ease-in {
+    transition-timing-function: ease-in;
+}
+
+.ease-out {
+    transition-timing-function: ease-out;
+}
+
 .whiteLeft, .whiteRight {
-    fill        : white;
-    stroke      : white;
-    stroke-width: 3;
+    fill     : white;
+    stroke   : white;
+    transform: none !important;
 }
 
 .blackLeft, .blackRight {
-    fill        : black;
-    stroke      : black;
-    stroke-width: 3;
+    fill  : black;
+    stroke: black;
 }
 
-.rotate {
-    -webkit-transform-origin  : center center;
-    transform-origin          : center center;
-    transition-timing-function: ease-in-out;
-    will-change               : transform;
+.hint {
+    position : absolute;
+    bottom   : 1vmin;
+    left     : 1vmin;
+    color    : rgba(255,255,255,0.5);
+    font-size: 5vmin;
 }
