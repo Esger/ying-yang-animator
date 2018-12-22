@@ -185,7 +185,8 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
             _classCallCheck(this, YingYangCustomElement);
 
             this._element = element;
-            this._animate = false;
+            this.animate = true;
+            this._triggered = false;
             this._cycleTime = 10000;
             this._rotationTime = this._cycleTime / 2;
             this.timingClass = 'ease-in';
@@ -215,53 +216,103 @@ define('resources/elements/ying-yang/ying-yang',['exports', 'aurelia-framework',
                 layer: 3,
                 id: 3
             }];
-            this.handleTransitionEnd = function (event) {
-                _this._setSortIndexes();
-                setTimeout(function () {
-                    _this._rotate();
-                });
+            this._animationTypes = {
+                'rotate': {
+                    'stageSortOrders': [[3, 1, 2, 0], [2, 0, 3, 1], [0, 2, 1, 3], [1, 3, 0, 2]],
+                    'actions': function actions() {
+                        _this._stepCounter++;
+                        _this.timingClass = _this._stepCounter % 2 == 1 ? 'ease-in' : 'ease-out';
+                        _this.angle = _this._stepCounter * 180;
+                    }
+                },
+                'backAndForth': {
+                    'stageSortOrders': [[3, 1, 2, 0], [2, 0, 3, 1], [2, 0, 3, 1], [3, 1, 2, 0]],
+                    'actions': function actions() {
+                        var angles = [0, 180, 360, 180];
+                        _this._stepCounter++;
+                        _this.timingClass = _this._stepCounter % 2 == 1 ? 'ease-in' : 'ease-out';
+                        _this.angle = angles[_this._stepCounter % 4];
+                    }
+                }
+            };
+            this._currentAnimationType = 'backAndForth';
+            this._handleTransitionEnd = function () {
+                _this._setLayers();
             };
         }
 
         YingYangCustomElement.prototype.attached = function attached() {
-            var _this2 = this;
-
-            this._setSortIndexes();
-            this._transitionEndListener = document.addEventListener('transitionend', function (event) {
-                var $element = $(event.target);
-                var trigger = $element.hasClass('blackLeft') && !$element.hasClass('aurelia-hide');
-                if (trigger) {
-                    _this2.handleTransitionEnd(event);
-                }
-            });
-            setTimeout(function () {
-                _this2._rotate();
-            });
+            this._start();
         };
 
         YingYangCustomElement.prototype.detached = function detached() {
+            this._removeTranitionEndLister();
+        };
+
+        YingYangCustomElement.prototype._start = function _start() {
+            this._addTransitionEndListener();
+            this._setLayers();
+        };
+
+        YingYangCustomElement.prototype._addTransitionEndListener = function _addTransitionEndListener() {
+            var _this2 = this;
+
+            this._transitionEndListener = document.addEventListener('transitionend', function () {
+                if (!_this2._triggered) {
+                    _this2._triggered = true;
+                    setTimeout(function () {
+                        _this2._triggered = false;
+                    }, 500);
+                    _this2._handleTransitionEnd();
+                }
+            });
+        };
+
+        YingYangCustomElement.prototype._removeTranitionEndLister = function _removeTranitionEndLister() {
             if (this._transitionEndListener) {
-                document.removeEventListener('transitionend', this.handleTransitionEnd);
+                document.removeEventListener('transitionend', this._handleTransitionEnd);
             }
         };
 
-        YingYangCustomElement.prototype._setSortIndexes = function _setSortIndexes() {
-            var stageSortOrders = [[3, 1, 2, 0], [2, 0, 3, 1], [0, 2, 1, 3], [1, 3, 0, 2]];
-            var sortOrder = stageSortOrders[this._stepCounter % 4];
+        YingYangCustomElement.prototype._setLayers = function _setLayers() {
+            var _this3 = this;
+
+            var phase = this._stepCounter % 4;
+            var layerOrder = this._animationTypes[this._currentAnimationType].stageSortOrders[phase];
+            var layers = [];
             for (var i = 0; i < this.parts.length; i++) {
                 var part = this.parts[i];
-                part.layer = sortOrder[part.id];
+                part.layer = layerOrder[i];
+                layers.push(part.layer);
             }
-        };
 
-        YingYangCustomElement.prototype._rotate = function _rotate() {
-            this._stepCounter++;
-            this.timingClass = this._stepCounter % 2 == 1 ? 'ease-in' : 'ease-out';
-            this.angle = this._stepCounter * 180;
+            setTimeout(function () {
+                _this3._animationTypes[_this3._currentAnimationType].actions();
+            });
         };
 
         YingYangCustomElement.prototype.toggleAnimation = function toggleAnimation() {
-            this._rotate();
+            var _this4 = this;
+
+            this._removeTranitionEndLister();
+            this.animate = false;
+            this.angle = 0;
+            this._stepCounter = 0;
+            switch (this._currentAnimationType) {
+                case 'rotate':
+                    this._currentAnimationType = 'backAndForth';
+                    break;
+                case 'backAndForth':
+                    this._currentAnimationType = 'rotate';
+                    break;
+                default:
+                    break;
+            }
+            setTimeout(function () {
+                _this4.animate = true;
+
+                _this4._start();
+            }, 500);
         };
 
         return YingYangCustomElement;
@@ -2905,5 +2956,5 @@ define('aurelia-templating-resources/dynamic-element',['exports', 'aurelia-templ
   }
 });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n    <require from=\"resources/elements/ying-yang/ying-yang\"></require>\n    <ying-yang containerless></ying-yang>\n</template>"; });
-define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"container\"\n         click.trigger=\"toggleAnimation()\">\n        <svg version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g repeat.for=\"layer of 4\"\n               id=\"Layer_${layer}\">\n                <path repeat.for=\"part of parts\"\n                      data-layer.bind=\"part.layer\"\n                      class=\"${part.classNames} ${timingClass} ${(layer == part.layer) ? '' : 'aurelia-hide'} ${''}\"\n                      css=\"transform: rotate(${angle}deg); transition-duration: ${duration/1000 & oneTime}s;\"\n                      d=\"${part.d}\"></path>\n            </g>\n        </svg>\n    </div>\n\n</template>"; });
+define('text!resources/elements/ying-yang/ying-yang.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"container\"\n         click.delegate=\"toggleAnimation()\">\n        <svg show.bind=\"animate\"\n             version=\"1.1\"\n             x=\"0px\"\n             y=\"0px\"\n             width=\"400px\"\n             height=\"400px\"\n             viewBox=\"0 0 400 400\"\n             enable-background=\"new 0 0 400 400\"\n             xml:space=\"preserve\">\n            <g repeat.for=\"layer of 4\"\n               id=\"Layer_${layer}\">\n                <path repeat.for=\"part of parts\"\n                      data-layer=\"${part.layer}\"\n                      class=\"${part.classNames} ${timingClass} ${(layer == part.layer) ? '' : 'aurelia-hide'}\"\n                      css=\"transform: rotate(${angle}deg); transition-duration: ${duration/1000}s;\"\n                      d=\"${part.d}\"></path>\n            </g>\n        </svg>\n    </div>\n\n</template>"; });
 //# sourceMappingURL=app-bundle.js.map

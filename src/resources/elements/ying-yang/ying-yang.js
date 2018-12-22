@@ -7,7 +7,8 @@ export class YingYangCustomElement {
 
     constructor(eventAggregator, element) {
         this._element = element;
-        this._animate = false;
+        this.animate = true;
+        this._triggered = false;
         this._cycleTime = 10000;
         this._rotationTime = this._cycleTime / 2;
         this.timingClass = 'ease-in';
@@ -45,58 +46,108 @@ export class YingYangCustomElement {
                 id: 3
             },
         ];
-        this.handleTransitionEnd = (event) => {
-            this._setSortIndexes();
-            setTimeout(() => {
-                this._rotate();
-            });
+        this._animationTypes = {
+            'rotate': {
+                'stageSortOrders': [
+                    [3, 1, 2, 0],
+                    [2, 0, 3, 1],
+                    [0, 2, 1, 3],
+                    [1, 3, 0, 2]
+                ],
+                'actions': () => {
+                    this._stepCounter++;
+                    this.timingClass = (this._stepCounter % 2 == 1) ? 'ease-in' : 'ease-out';
+                    this.angle = this._stepCounter * 180;
+                }
+            },
+            'backAndForth': {
+                'stageSortOrders': [
+                    [3, 1, 2, 0],
+                    [2, 0, 3, 1],
+                    [2, 0, 3, 1],
+                    [3, 1, 2, 0]
+                ],
+                'actions': () => {
+                    let angles = [0, 180, 360, 180];
+                    this._stepCounter++;
+                    this.timingClass = (this._stepCounter % 2 == 1) ? 'ease-in' : 'ease-out';
+                    this.angle = angles[this._stepCounter % 4];
+                }
+            }
+        };
+        this._currentAnimationType = 'backAndForth';
+        this._handleTransitionEnd = () => {
+            this._setLayers();
         };
     }
 
     attached() {
-        this._setSortIndexes();
-        this._transitionEndListener = document.addEventListener('transitionend', (event) => {
-            let $element = $(event.target);
-            let trigger = $element.hasClass('blackLeft') && !$element.hasClass('aurelia-hide');
-            if (trigger) {
-                this.handleTransitionEnd(event);
-            }
-        });
-        setTimeout(() => {
-            this._rotate();
-        });
+        this._start();
     }
 
     detached() {
+        this._removeTranitionEndLister();
+    }
+
+    _start() {
+        this._addTransitionEndListener();
+        this._setLayers();
+    }
+
+    _addTransitionEndListener() {
+        this._transitionEndListener = document.addEventListener('transitionend', () => {
+            // only trigger handleTransitionEnd once
+            if (!this._triggered) {
+                this._triggered = true;
+                setTimeout(() => {
+                    this._triggered = false;
+                }, 500);
+                this._handleTransitionEnd();
+            }
+        });
+    }
+
+    _removeTranitionEndLister() {
         if (this._transitionEndListener) {
-            document.removeEventListener('transitionend', this.handleTransitionEnd);
+            document.removeEventListener('transitionend', this._handleTransitionEnd);
         }
     }
 
-    _setSortIndexes() {
-        let stageSortOrders = [
-            [3, 1, 2, 0],
-            [2, 0, 3, 1],
-            [0, 2, 1, 3],
-            [1, 3, 0, 2]
-        ];
-        let sortOrder = stageSortOrders[this._stepCounter % 4];
+    _setLayers() {
+        let phase = this._stepCounter % 4;
+        let layerOrder = this._animationTypes[this._currentAnimationType].stageSortOrders[phase];
+        let layers = [];
         for (let i = 0; i < this.parts.length; i++) {
             const part = this.parts[i];
-            part.layer = sortOrder[part.id];
+            part.layer = layerOrder[i];
+            layers.push(part.layer);
         }
-    }
-
-    _rotate() {
-        this._stepCounter++;
-        this.timingClass = (this._stepCounter % 2 == 1) ? 'ease-in' : 'ease-out';
-        this.angle = this._stepCounter * 180;
+        // console.table(layers);
+        setTimeout(() => {
+            this._animationTypes[this._currentAnimationType].actions();
+        });
     }
 
     toggleAnimation() {
-        // this.angle = 0;
-        // this._stepCounter = 0;
-        this._rotate();
+        this._removeTranitionEndLister();
+        this.animate = false;
+        this.angle = 0;
+        this._stepCounter = 0;
+        switch (this._currentAnimationType) {
+            case 'rotate':
+                this._currentAnimationType = 'backAndForth';
+                break;
+            case 'backAndForth':
+                this._currentAnimationType = 'rotate';
+                break;
+            default:
+                break;
+        }
+        setTimeout(() => {
+            this.animate = true;
+            // console.log(this._currentAnimationType);
+            this._start();
+        }, 500);
     }
 
 }
