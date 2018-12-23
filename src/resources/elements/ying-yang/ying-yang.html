@@ -12,9 +12,32 @@
              viewBox="0 0 400 400"
              enable-background="new 0 0 400 400"
              xml:space="preserve">
+            <defs>
+                <filter id="dropshadow"
+                        x="-10%"
+                        y="-10%"
+                        width="120%"
+                        height="120%">
+                    <feOffset result="offOut"
+                              in="SourceGraphic"
+                              dx="0"
+                              dy="0" />
+                    <feColorMatrix result="matrixOut"
+                                   in="offOut"
+                                   type="matrix"
+                                   values="0.5 0 0 0 0 0 0.5 0 0 0 0 0 0.5 0 0 0 0 0 1 0" />
+                    <feGaussianBlur result="blurOut"
+                                    in="matrixOut"
+                                    stdDeviation="5" />
+                    <feBlend in="SourceGraphic"
+                             in2="blurOut"
+                             mode="normal" />
+                </filter>
+            </defs>
             <g repeat.for="layer of 4"
                id="Layer_${layer}">
                 <path repeat.for="part of parts"
+                      filter="${($index >= 2) ? 'url(#dropshadow)' : ''}"
                       data-layer="${part.layer}"
                       class="${part.classNames} ${timingClass} ${(layer == part.layer) ? '' : 'aurelia-hide'}"
                       css="transform: rotate(${angle}deg); transition-duration: ${duration/1000}s;"
