@@ -1,7 +1,7 @@
 body {
   position: relative;
   height: 100vh;
-  background-color: goldenrod;
+  background-color: white;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', sans-serif;
   margin: 0;
   padding: 0;
@@ -38,15 +38,15 @@ svg {
 }
 .whiteLeft,
 .whiteRight {
-  fill: white;
-  stroke: white;
+  fill: rgba(8, 168, 42, 0.8);
+  stroke: rgba(8, 168, 42, 0.3);
   -webkit-transform: none !important;
           transform: none !important;
 }
 .blackLeft,
 .blackRight {
-  fill: black;
-  stroke: black;
+  fill: rgba(143, 211, 249, 0.92);
+  stroke: rgba(143, 211, 249, 0.41);
 }
 .hint {
   position: absolute;
